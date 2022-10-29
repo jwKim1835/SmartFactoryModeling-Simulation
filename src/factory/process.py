@@ -1,12 +1,15 @@
-import factory.storage
+from asyncio.windows_events import NULL
+from factory.Storage import Storage
 
-class process:
+
+class Process:
     def __init__(self, processId):
         self.processId = processId
+        self.minProcessTime = NULL
         self.processTime = 0
         self.defectiveRate = 0.0
-        self.oldProcessStorage = {}
-        self.processStorage = {}
+        self.oldProcessStorage:dict[str,Storage] = {}
+        self.processStorage:dict[str,Storage] = {}
         
         self.STORAGE = 'STORAGE'
         self.COST = 'COST'
@@ -20,6 +23,9 @@ class process:
         
     def setProcessTime(self, processTime):
         self.processTime = processTime
+        
+    def setMinProcessTime( self, minProcessTime):
+        self.minProcessTime = minProcessTime
                 
     def setDefectiveRate(self, defectiveRate):
         self.defectiveRate = defectiveRate

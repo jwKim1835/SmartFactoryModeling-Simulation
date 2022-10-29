@@ -1,6 +1,6 @@
 import simpy
 
-class storage:
+class Storage:
     def __init__(self, env, storageId, maxSize, initSize):
         self.storageId = storageId
         self.maxSize = maxSize
