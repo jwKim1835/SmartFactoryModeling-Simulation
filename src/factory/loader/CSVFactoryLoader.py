@@ -1,5 +1,7 @@
 import csv
 
+import simpy
+
 from factory.Factory import Factory
 
 #-------------------------------------------------------------------------------------------------------------------
@@ -30,9 +32,8 @@ from factory.Factory import Factory
 #-------------------------------------------------------------------------------------------------------------------
 class CSVFactoryLoader:
     
-    def __init__(self, env):
+    def __init__(self):
         self.factoryInfo:dict[str,dict] = {}
-        self.env = env
     
     def load(self, path):
         try:
@@ -87,7 +88,7 @@ class CSVFactoryLoader:
         resultFactoryList:list[Factory] = []
         
         for name, factoryData in self.factoryInfo.items():
-            factory = Factory(self.env, name)
+            factory = Factory(name)
             resultFactoryList.append(factory)
     
             for storageName, storage in self.factoryInfo[name]["Storage"].items():

@@ -3,11 +3,11 @@ from factory.Storage import Storage
 from factory.Process import Process
 
 class Factory: 
-    def __init__(self, env, name):
+    def __init__(self, name):
         self.dictProcess:dict[str,Process] = {}
         self.dictStorage:dict[str,Storage] = {}
         self.name = name
-        self.env = env
+        self.env = simpy.Environment()
     
     # make storage
     def makeStorage(self, name, maxSize, initSize):
@@ -119,7 +119,7 @@ class Factory:
     ## show stoarge
     def printStorageInfo(self):
         for storageName, storage in self.dictStorage.items():
-            print( f'%s storage current size: %d' % (storageName, storage.getSize()) )
+            print( f'[%s] %s storage current size: %d' % (self.name, storageName, storage.getSize()) )
     
     ## show process
     def printProcessInfo(self):

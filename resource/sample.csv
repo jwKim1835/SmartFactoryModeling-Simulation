@@ -2,3 +2,8 @@ Factory,Type,Name,MaxSize,InitSize,Time,MinTime,OldProcessStorage,OldProcessStor
 Machine1,Storage,Test,1000,500,,,,,,,
 Machine1,Storage,Test2,2000,0,,,,,,,
 Machine1,Process,TestProcess,,,3,,Test,2,Test2,1,
+Machine1,Process,TestProcess2,,,4,,Test2,1,Final,1,
+Machine1,Storage,Final,5000,0,,,,,,,
+TestMachine,Storage,Test,1000,500,,,,,,,
+TestMachine,Storage,Test2,2000,0,,,,,,,
+TestMachine,Process,TestProcess,,,3,,Test,2,Test2,1,

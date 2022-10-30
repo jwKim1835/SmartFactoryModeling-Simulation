@@ -7,10 +7,8 @@ from factory.loader.CSVFactoryLoader import CSVFactoryLoader
 
 from factory.Factory import Factory
 
-env = simpy.Environment()
-
-loader = CSVFactoryLoader(env)
-if loader.load( "resource/sample.csv " ):
+loader = CSVFactoryLoader()
+if loader.load( "resource/sample.csv" ):
     listFactory = loader.makeFactory()
     
     try:
