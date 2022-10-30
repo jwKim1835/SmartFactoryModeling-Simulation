@@ -1,4 +1,4 @@
-Factory, Type, Name, MaxSize, InitSize, Time, MinTime, OldProcessStorage, OldProcessStorageCost, ProcessStorage, ProcessStorageCost, DefectiveRate
-Machine1, Storage, Test, 1000, 500, , , , , , , 
-Machine1, Storage, Test2, 2000, 0, , , , , , , 
-Machine1, Process, TestProcess, , , 3, , Test, 2, Test2, 1, 
+Factory,Type,Name,MaxSize,InitSize,Time,MinTime,OldProcessStorage,OldProcessStorageCost,ProcessStorage,ProcessStorageCost,DefectiveRate
+Machine1,Storage,Test,1000,500,,,,,,,
+Machine1,Storage,Test2,2000,0,,,,,,,
+Machine1,Process,TestProcess,,,3,,Test,2,Test2,1,

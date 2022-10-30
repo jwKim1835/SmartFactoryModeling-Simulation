@@ -21,16 +21,16 @@ class Process:
     def getProcessId(self):
         return self.processId
         
-    def setProcessTime(self, processTime):
+    def setProcessTime(self, processTime:int):
         self.processTime = processTime
         
-    def setMinProcessTime( self, minProcessTime):
+    def setMinProcessTime( self, minProcessTime:int):
         self.minProcessTime = minProcessTime
                 
-    def setDefectiveRate(self, defectiveRate):
+    def setDefectiveRate(self, defectiveRate:float):
         self.defectiveRate = defectiveRate
         
-    def addOldProcessStorage(self, storageId, storage, cost):
+    def addOldProcessStorage(self, storageId, storage, cost:int):
         if storageId in self.oldProcessStorage:
             return
         
@@ -44,7 +44,7 @@ class Process:
         
         self.oldProcessStorage.pop(storageId)
         
-    def addProcessStorage(self, storageId, storage, cost):
+    def addProcessStorage(self, storageId, storage, cost:int):
         if storageId in self.processStorage:
             return
         

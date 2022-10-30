@@ -1,7 +1,7 @@
 import simpy
 
 class Storage:
-    def __init__(self, env, storageId, maxSize, initSize):
+    def __init__(self, env, storageId, maxSize:int, initSize:int):
         self.storageId = storageId
         self.maxSize = maxSize
         self.initSize = initSize
@@ -15,3 +15,6 @@ class Storage:
     
     def getStorageId(self):
         return self.storageId
+    
+    def getSize(self):
+        return self.container.level
