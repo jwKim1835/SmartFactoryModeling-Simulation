@@ -48,10 +48,10 @@ class Factory:
         else:
             nMinProcessTime = int(minProcessTime or 0)
         
-        if type(defectiveRate) == float:
+        if type(defectiveRate) == int:
             fDefectiveRate = defectiveRate
         else:
-            fDefectiveRate = float(defectiveRate or 0)
+            fDefectiveRate = int(defectiveRate or 0)
         
         newProcess = Process(name)      
         newProcess.setProcessTime(nProcessTime)

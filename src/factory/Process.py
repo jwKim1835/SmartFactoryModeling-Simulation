@@ -1,4 +1,5 @@
 from asyncio.windows_events import NULL
+import random
 from factory.Storage import Storage
 
 
@@ -7,7 +8,7 @@ class Process:
         self.processId = processId
         self.minProcessTime = NULL
         self.processTime = 0
-        self.defectiveRate = 0.0
+        self.defectiveRate = 0
         self.oldProcessStorage:dict[str,Storage] = {}
         self.processStorage:dict[str,Storage] = {}
         
@@ -27,8 +28,11 @@ class Process:
     def setMinProcessTime( self, minProcessTime:int):
         self.minProcessTime = minProcessTime
                 
-    def setDefectiveRate(self, defectiveRate:float):
-        self.defectiveRate = defectiveRate
+    def setDefectiveRate(self, defectiveRate:int):
+        if defectiveRate > 100:
+            self.defectiveRate = 100
+        else:
+            self.defectiveRate = defectiveRate
         
     def addOldProcessStorage(self, storageId, storage, cost:int):
         if storageId in self.oldProcessStorage:
@@ -58,8 +62,11 @@ class Process:
         
         self.processStorage.pop(storageId)
         
+    def getDefectCount(self):
+        return self.defectCount
+        
     def run(self, env):
-        defectCount = 0
+        self.defectCount = 0
         while True:
             for oldStorage in self.oldProcessStorage.values():
                 yield oldStorage[self.STORAGE].get(oldStorage[self.COST])
@@ -67,6 +74,9 @@ class Process:
             yield env.timeout(self.processTime)
             
             # 불량확율 조건 필요
+            if random.randrange(1, 101) < self.defectiveRate:
+                self.defectCount += 1
+                continue
             
             for storage in self.processStorage.values():
                 yield storage[self.STORAGE].put(storage[self.COST])

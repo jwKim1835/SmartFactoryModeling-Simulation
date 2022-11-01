@@ -95,7 +95,7 @@ class CSVFactoryLoader:
                 factory.makeStorage(storageName, storage.get("MaxSize"), storage.get("InitSize"))
         
             for processName, process in self.factoryInfo[name]["Process"].items():
-                factory.makeProcess(processName, process.get("Time"), process.get("MinTime"), process.get("DefectRate"))
+                factory.makeProcess(processName, process.get("Time"), process.get("MinTime"), process.get("DefectiveRate"))
                 factory.connectStorageToProcess(processName, process.get("OldProcessStorage"), process.get("OldProcessStorageCost"), process.get("ProcessStorage"), process.get("ProcessStorageCost"))
                 
         return resultFactoryList
