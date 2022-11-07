@@ -1,13 +1,13 @@
 import simpy
-import factory.process
-import factory.storage
+import factory.Process
+import factory.Storage
 
 TOTAL_TIME = 30
 
 env = simpy.Environment()
-testProcess = factory.process.process('Test')
-testStorage = factory.storage.storage(env, 'Test', 100, 50)
-testStorage2 = factory.storage.storage(env, 'Test2', 100, 0)
+testProcess = factory.Process.Process('Test')
+testStorage = factory.Storage.Storage(env, 'Test', 100, 50)
+testStorage2 = factory.Storage.Storage(env, 'Test2', 100, 0)
 
 testProcess.setProcessTime(4)
 testProcess.addOldProcessStorage(testStorage.getStorageId(), testStorage, 2)

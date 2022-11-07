@@ -1,12 +1,16 @@
-import factory.storage
+from asyncio.windows_events import NULL
+import random
+from factory.Storage import Storage
 
-class process:
+
+class Process:
     def __init__(self, processId):
         self.processId = processId
+        self.minProcessTime = NULL
         self.processTime = 0
-        self.defectiveRate = 0.0
-        self.oldProcessStorage = {}
-        self.processStorage = {}
+        self.defectiveRate = 0
+        self.oldProcessStorage:dict[str,Storage] = {}
+        self.processStorage:dict[str,Storage] = {}
         
         self.STORAGE = 'STORAGE'
         self.COST = 'COST'
@@ -18,13 +22,19 @@ class process:
     def getProcessId(self):
         return self.processId
         
-    def setProcessTime(self, processTime):
+    def setProcessTime(self, processTime:int):
         self.processTime = processTime
-                
-    def setDefectiveRate(self, defectiveRate):
-        self.defectiveRate = defectiveRate
         
-    def addOldProcessStorage(self, storageId, storage, cost):
+    def setMinProcessTime( self, minProcessTime:int):
+        self.minProcessTime = minProcessTime
+                
+    def setDefectiveRate(self, defectiveRate:int):
+        if defectiveRate > 100:
+            self.defectiveRate = 100
+        else:
+            self.defectiveRate = defectiveRate
+        
+    def addOldProcessStorage(self, storageId, storage, cost:int):
         if storageId in self.oldProcessStorage:
             return
         
@@ -38,7 +48,7 @@ class process:
         
         self.oldProcessStorage.pop(storageId)
         
-    def addProcessStorage(self, storageId, storage, cost):
+    def addProcessStorage(self, storageId, storage, cost:int):
         if storageId in self.processStorage:
             return
         
@@ -52,8 +62,11 @@ class process:
         
         self.processStorage.pop(storageId)
         
+    def getDefectCount(self):
+        return self.defectCount
+        
     def run(self, env):
-        defectCount = 0
+        self.defectCount = 0
         while True:
             for oldStorage in self.oldProcessStorage.values():
                 yield oldStorage[self.STORAGE].get(oldStorage[self.COST])
@@ -61,6 +74,9 @@ class process:
             yield env.timeout(self.processTime)
             
             # 불량확율 조건 필요
+            if random.randrange(1, 101) < self.defectiveRate:
+                self.defectCount += 1
+                continue
             
             for storage in self.processStorage.values():
                 yield storage[self.STORAGE].put(storage[self.COST])
