@@ -1,0 +1,6 @@
+streamlit
+numpy
+altair
+pandas
+scipy
+click
