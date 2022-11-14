@@ -82,7 +82,7 @@ class Factory:
             else:
                 nOldStorageCost = int(oldStorageCost)
         except:
-            print( f"read OldStorageCost: %s CurrentOldStorageCost: %d" % (oldStorageCost, nOldStorageCost) )
+            print( f"read OldStorage: %s OldStorageCost: %s CurrentOldStorageCost: %d" % (oldStorageName, oldStorageCost, nOldStorageCost) )
         
         try:
             if type(cost) == int:
@@ -90,7 +90,7 @@ class Factory:
             else:
                 nCost = int(cost)
         except:
-            print( f"read StorageCost: %s CurrentStorageCost: %d" % (cost, nCost) )
+            print( f"read Storage: %s StorageCost: %s CurrentStorageCost: %d" % (storageName, cost, nCost) )
                     
         self.dictProcess[processName].addOldProcessStorage(oldStorageName, self.dictStorage[oldStorageName], nOldStorageCost)
         self.dictProcess[processName].addProcessStorage(storageName, self.dictStorage[storageName], nCost)

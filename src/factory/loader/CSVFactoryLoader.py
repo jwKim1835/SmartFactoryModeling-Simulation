@@ -35,6 +35,7 @@ class CSVFactoryLoader:
     
     def __init__(self):
         self.factoryInfo:dict[str,dict] = {}
+        self.csvFileInfo:list = []
     
     def load(self, path):
         try:
@@ -43,6 +44,7 @@ class CSVFactoryLoader:
             with open("resource/sample.csv", newline="") as csvFile:
                 reader = csv.DictReader(csvFile)
                 for row in reader:
+                    self.csvFileInfo.append(row)
                     if row["Factory"] not in fileInfo:
                         fileInfo[row["Factory"]] = { "Process": dict[str,list](), "Storage": {}}
                 
@@ -107,3 +109,6 @@ class CSVFactoryLoader:
                     factory.connectStorageToProcess(processName, process.get("OldProcessStorage"), process.get("OldProcessStorageCost"), process.get("ProcessStorage"), process.get("ProcessStorageCost"))
                 
         return resultFactoryList
+    
+    def getCSVFileData(self):
+        return self.csvFileInfo
