@@ -27,10 +27,28 @@ class FactorySetting:
             
             
     def drawDataFrame(self):
-        if self.csvFileInfo is not None:
-            st.dataframe(self.csvFileInfo)
+        st.dataframe(self.csvFileInfo)
+            
+    def drawTimeInput(self):
+        with st.form("TimeForm"):
+            factoryRunningTime = st.text_input("Factory Running Time")
+            submitted = st.form_submit_button("Running")
+            
+            if submitted:
+                try:
+                    nFactoryRunningTime = int(factoryRunningTime)
+                    
+                    for factory in self.listFactory:
+                        factory.runProcess(nFactoryRunningTime)
+                
+                except:
+                    st.error(f"ERROR) Only Number Input: %s" % (factoryRunningTime))
+                pass
                 
     def readFile(self, file):
+        if self.csvFileInfo is not None:
+            return
+        
         loader = CSVFactoryLoader()
         if loader.load( file ):
             self.listFactory = loader.makeFactory()
@@ -40,7 +58,9 @@ class FactorySetting:
         st.markdown("# Factory Settings")
         self.drawFileUploader()
         self.drawSampleFileCheckBox()
-        self.drawDataFrame()
+        if self.csvFileInfo is not None:
+            self.drawDataFrame()
+            self.drawTimeInput()
         pass
     
     
