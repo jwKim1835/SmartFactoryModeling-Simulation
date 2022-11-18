@@ -121,6 +121,27 @@ class Factory:
         self.env.run( until=time )
     
     # output
+    def getFactoryName(self):
+        return self.name
+    
+    def getStorageData(self):
+        dictStorage = dict[str,int]()
+        
+        for name, storage in self.dictStorage.items():
+            dictStorage[name] = storage.getSize()
+            
+        return dictStorage
+        
+        # dictStorage["Column"].append("Factory")
+        # dictStorage["Data"].append(self.getFactoryName())
+        # for name, storage in self.dictStorage.items():
+        #     dictStorage["Column"].append(name)
+        #     dictStorage["Data"].append(storage.getSize())
+            
+    def getProcessDefectData(self):
+        dictProcessDefect = dict[str, int]()
+        for name, process in self.dictProcess.items():
+            dictProcessDefect[name] = process.getDefectCount()
     
     ## show stoarge
     def printStorageInfo(self):

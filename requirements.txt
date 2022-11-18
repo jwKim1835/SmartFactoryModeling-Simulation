@@ -4,3 +4,4 @@ altair
 pandas
 scipy
 click
+plotly

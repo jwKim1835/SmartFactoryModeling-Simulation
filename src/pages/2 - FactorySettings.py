@@ -1,7 +1,9 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))                    # import parent directory
+import pandas as pd
 import streamlit as st
+import plotly.express as px
 from factory.loader.CSVFactoryLoader import CSVFactoryLoader
 
 class FactorySetting:
@@ -40,11 +42,35 @@ class FactorySetting:
                     
                     for factory in self.listFactory:
                         factory.runProcess(nFactoryRunningTime)
-                
-                except:
+                        
+                    self.drawDataInfo()
+                except Exception as e:
                     st.error(f"ERROR) Only Number Input: %s" % (factoryRunningTime))
-                pass
+    
+    def drawDataInfo(self):
+        listStorageName = self.getFactoryStorageNames()
+        listStorageChartColumn = ["Factory"]
+        listStorageChartColumn.extend(listStorageName)
+        
+        listChartDatas = []                        
+        for factory in self.listFactory:
+            listStorageData = [factory.getFactoryName()]
+            listColumData = ["" for index in range(listStorageName.__len__())]
+            
+            for column, data in factory.getStorageData().items():
+                index = listStorageName.index(column)
+                listColumData.insert(index, data)
+                listColumData.pop(index+1)
+            
+            listStorageData.extend(listColumData)
+            listChartDatas.append(listStorageData)
                 
+        storageFrame = pd.DataFrame(data=listChartDatas, columns=listStorageChartColumn)
+        fig = px.bar(storageFrame, x="Factory", y=listStorageName, barmode="group")
+            
+        st.plotly_chart(fig)
+            
+        
     def readFile(self, file):
         if self.csvFileInfo is not None:
             return
@@ -53,6 +79,16 @@ class FactorySetting:
         if loader.load( file ):
             self.listFactory = loader.makeFactory()
             self.csvFileInfo = loader.getCSVFileData()
+            
+    def getFactoryStorageNames(self):
+        listStorageName = list[str]()
+        
+        for factory in self.listFactory:
+            for storageName in factory.getStorageData().keys():
+                if storageName not in listStorageName:
+                    listStorageName.append(storageName)
+                    
+        return listStorageName
 
     def draw(self):
         st.markdown("# Factory Settings")
