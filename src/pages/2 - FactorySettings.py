@@ -4,15 +4,14 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))    
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import matplotlib.pyplot as plt
 from factory.loader.CSVFactoryLoader import CSVFactoryLoader
+from factory import Factory
 
 class FactorySetting:
     def __init__(self):
         self.csvFileInfo = None
-        pass
-    
-    def initialize(self):
-        pass
+        self.listFactory = None
     
     def drawFileUploader(self):
         uploadFile = st.file_uploader("CSV File ONLY", type=".csv")
@@ -23,8 +22,8 @@ class FactorySetting:
         if self.csvFileInfo is not None:
             return
         
-        isUseSampleFile = st.checkbox("Use Sample Data", False)
-        if isUseSampleFile:
+        # isUseSampleFile = st.checkbox("Use Sample Data")
+        if st.checkbox("Use Sample Data", value=False) == True:
             self.readFile("resource/sample.csv")
             
             
@@ -32,6 +31,7 @@ class FactorySetting:
         st.dataframe(self.csvFileInfo)
             
     def drawTimeInput(self):
+        
         with st.form("TimeForm"):
             factoryRunningTime = st.text_input("Factory Running Time")
             submitted = st.form_submit_button("Running")
@@ -43,11 +43,19 @@ class FactorySetting:
                     for factory in self.listFactory:
                         factory.runProcess(nFactoryRunningTime)
                         
-                    self.drawDataInfo()
                 except Exception as e:
                     st.error(f"ERROR) Only Number Input: %s" % (factoryRunningTime))
+                    
+        if submitted:
+            with st.expander("Storage Info"):
+                self.drawStorageDataInfo()
+                
+            with st.expander("Process Info"):
+                self.drawDefectDataInfo()
     
-    def drawDataInfo(self):
+    def drawStorageDataInfo(self):
+        
+        st.header("Storage Data")
         listStorageName = self.getFactoryStorageNames()
         listStorageChartColumn = ["Factory"]
         listStorageChartColumn.extend(listStorageName)
@@ -66,10 +74,68 @@ class FactorySetting:
             listChartDatas.append(listStorageData)
                 
         storageFrame = pd.DataFrame(data=listChartDatas, columns=listStorageChartColumn)
-        fig = px.bar(storageFrame, x="Factory", y=listStorageName, barmode="group")
+        figure = px.bar(storageFrame, x="Factory", y=listStorageName, barmode="group")
             
-        st.plotly_chart(fig)
+        st.plotly_chart(figure)
+        
+    def drawDefectDataInfo(self):
+        listFactoryName = []
+        mapFactory = dict[str,]()
+        COL_MAX = 2
+        st.header("Process Data")
+        
+        for factory in self.listFactory:
+            listFactoryName.append(factory.getFactoryName())
+            mapFactory[factory.getFactoryName()] = factory
+        
+        processTabs = st.tabs(listFactoryName)
+        
+        for index in range(listFactoryName.__len__()):
+            with processTabs[index]:
+                col = None
+                st.subheader(listFactoryName[index])
+                colIndex = 0
+                factoryProcessData = mapFactory[listFactoryName[index]].getProcessData()
             
+                for processName, processData in factoryProcessData.items():
+                    if colIndex % COL_MAX == 0:
+                        colIndex = 0
+                        col = st.columns(COL_MAX)
+                    
+                    with col[colIndex]:
+                        # Sample 1
+                        # fig1, ax = plt.subplots()
+                        # ax.pie(processData["Value"], labels=processData["Type"], shadow=True, autopct='%d%%')
+                        # st.pyplot(fig1)
+                        
+                        # Sample 2
+                        st.caption(processName)
+                        figure = px.sunburst(
+                            processData,
+                            names='Type',
+                            # parents=list("" for i in range(processData["Type"].__len__())),
+                            parents='Parent',
+                            values='Value',
+                        )
+                        figure.update_layout(
+                            autosize=False,
+                            width=512)
+                        
+                        # Sample 3
+                        # data = dict(
+                        #     character=["Eve", "Cain", "Seth", "Enos", "Noam", "Abel", "Awan", "Enoch", "Azura"],
+                        #     parent=["", "Eve", "Eve", "Seth", "Seth", "Eve", "Eve", "Awan", "Eve" ],
+                        #     value=[10, 14, 12, 10, 2, 6, 6, 4, 4])
+
+                        # figure = px.sunburst(
+                        #     data,
+                        #     names='character',
+                        #     parents='parent',
+                        #     values='value',
+                        # )
+                        st.plotly_chart(figure)
+                        
+                    colIndex += 1
         
     def readFile(self, file):
         if self.csvFileInfo is not None:
@@ -99,6 +165,6 @@ class FactorySetting:
             self.drawTimeInput()
         pass
     
-    
+st.set_page_config(layout="wide") 
 factorySetting = FactorySetting()
 factorySetting.draw()

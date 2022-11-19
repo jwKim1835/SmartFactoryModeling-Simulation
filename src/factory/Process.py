@@ -15,6 +15,7 @@ class Process:
         self.STORAGE = 'STORAGE'
         self.COST = 'COST'
         self.defectCount = 0
+        self.processRunningCount = 0
         
     def setProcessId(self, processId):
         self.processId = processId
@@ -64,6 +65,9 @@ class Process:
         
     def getDefectCount(self):
         return self.defectCount
+    
+    def getProcessRunningCount(self):
+        return self.processRunningCount
         
     def run(self, env):
         self.defectCount = 0
@@ -73,14 +77,15 @@ class Process:
             
             yield env.timeout(self.processTime)
             
+            self.processRunningCount += 1
+            
             # 불량확율 조건 필요
             if random.randrange(1, 101) < self.defectiveRate:
                 self.defectCount += 1
                 continue
             
             for storage in self.processStorage.values():
-                yield storage[self.STORAGE].put(storage[self.COST])
-            
+                yield storage[self.STORAGE].put(storage[self.COST])            
             
     def printProcessInfo(self):
         pass        # 현재 process 정보를 Print하는 로직 추가 필요

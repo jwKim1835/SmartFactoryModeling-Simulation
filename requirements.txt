@@ -5,3 +5,4 @@ pandas
 scipy
 click
 plotly
+matplotlib

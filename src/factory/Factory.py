@@ -131,17 +131,15 @@ class Factory:
             dictStorage[name] = storage.getSize()
             
         return dictStorage
-        
-        # dictStorage["Column"].append("Factory")
-        # dictStorage["Data"].append(self.getFactoryName())
-        # for name, storage in self.dictStorage.items():
-        #     dictStorage["Column"].append(name)
-        #     dictStorage["Data"].append(storage.getSize())
-            
-    def getProcessDefectData(self):
-        dictProcessDefect = dict[str, int]()
+    
+    def getProcessData(self):
+        dictProcessData = dict[str, dict[str,list]]()
         for name, process in self.dictProcess.items():
-            dictProcessDefect[name] = process.getDefectCount()
+            dictProcessData[name] = dict( Type = ["Process", "ProcessRuningCount", "DefectCount"]
+                                         , Parent = ["", "Process", "Process"]
+                                         , Value = [0, process.getProcessRunningCount(), process.getDefectCount()])
+            
+        return dictProcessData
     
     ## show stoarge
     def printStorageInfo(self):
