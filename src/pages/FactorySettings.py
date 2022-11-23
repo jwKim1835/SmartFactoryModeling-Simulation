@@ -22,9 +22,14 @@ class FactorySetting:
         if self.csvFileInfo is not None:
             return
         
-        # isUseSampleFile = st.checkbox("Use Sample Data")
-        if st.checkbox("Use Sample Data", value=False) == True:
+        isUseSampleFile = st.checkbox("Use Sample Data")                    
+        if isUseSampleFile == True:
             self.readFile("resource/sample.csv")
+                
+            with open("resource/sample.csv") as file:
+                st.download_button(label="Download Sample CSV",
+                                    data=file,
+                                    file_name="sample.csv")
             
             
     def drawDataFrame(self):
