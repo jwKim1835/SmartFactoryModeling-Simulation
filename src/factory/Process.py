@@ -6,16 +6,16 @@ from factory.Storage import Storage
 class Process:
     def __init__(self, processId):
         self.processId = processId
-        self.minProcessTime = NULL
-        self.processTime = 0
-        self.defectiveRate = 0
-        self.oldProcessStorage:dict[str,Storage] = {}
-        self.processStorage:dict[str,Storage] = {}
+        self.minProcessTime = NULL                                      # 최소 Process 동작 시간
+        self.processTime = 0                                            # Process 동작 시간
+        self.defectiveRate = 0                                          # 불량률
+        self.oldProcessStorage:dict[str,Storage] = {}                   # 이전 공정 Storage 정보
+        self.processStorage:dict[str,Storage] = {}                      # 현재 공정 Storage 정보
         
-        self.STORAGE = 'STORAGE'
-        self.COST = 'COST'
-        self.defectCount = 0
-        self.processRunningCount = 0
+        self.STORAGE = 'STORAGE'                                        # Constant
+        self.COST = 'COST'                                              # Constant
+        self.defectCount = 0                                            # 불량 발생 횟수
+        self.processRunningCount = 0                                    # Process 동작 횟수
         
     def setProcessId(self, processId):
         self.processId = processId
@@ -30,12 +30,20 @@ class Process:
         self.minProcessTime = minProcessTime
                 
     def setDefectiveRate(self, defectiveRate:int):
+        # 100 보다 클정우 100으로 고정
         if defectiveRate > 100:
             self.defectiveRate = 100
         else:
             self.defectiveRate = defectiveRate
         
     def addOldProcessStorage(self, storageId, storage, cost:int):
+        """ 이전 공정 Storage 지정
+
+        Args:
+            storageId (str): 이전 공정 저장소 ID
+            storage (obj): 이전 공정 객체
+            cost (int): 이전 공정 자재 소모값
+        """
         if storageId in self.oldProcessStorage:
             return
         
@@ -44,12 +52,24 @@ class Process:
         self.oldProcessStorage[storageId][self.COST] = cost
         
     def removeOldProcessStorage(self, storageId):
+        """ 이전 공정 저장소 삭제
+
+        Args:
+            storageId (str): 이전 공정 저장소 ID
+        """
         if storageId not in self.oldProcessStorage:
             return
         
         self.oldProcessStorage.pop(storageId)
         
     def addProcessStorage(self, storageId, storage, cost:int):
+        """ 현재 공정 저장소 등록
+
+        Args:
+            storageId (str): 저장소 ID
+            storage (obj): 저장소 객체
+            cost (int): 저장소 소모 값
+        """
         if storageId in self.processStorage:
             return
         
@@ -58,18 +78,38 @@ class Process:
         self.processStorage[storageId][self.COST] = cost
         
     def removeProcessStorage(self, storageId):
+        """ 현재 공정 저장소 삭제
+
+        Args:
+            storageId (str): 저장소 ID
+        """
         if storageId not in self.processStorage:
             return
         
         self.processStorage.pop(storageId)
         
     def getDefectCount(self):
+        """ 불량 발생 횟수 반환
+
+        Returns:
+            int: 불량 발생 횟수
+        """
         return self.defectCount
     
     def getProcessRunningCount(self):
+        """ Process 동작 횟수
+
+        Returns:
+            int: 동작 횟수
+        """
         return self.processRunningCount
         
     def run(self, env):
+        """ Process 동작
+
+        Args:
+            env (obj): simpy 객체
+        """
         self.defectCount = 0
         while True:
             for oldStorage in self.oldProcessStorage.values():
@@ -86,6 +126,3 @@ class Process:
             
             for storage in self.processStorage.values():
                 yield storage[self.STORAGE].put(storage[self.COST])            
-            
-    def printProcessInfo(self):
-        pass        # 현재 process 정보를 Print하는 로직 추가 필요
