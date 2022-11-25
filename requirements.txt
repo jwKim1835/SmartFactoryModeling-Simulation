@@ -1,0 +1,8 @@
+streamlit
+numpy
+altair
+pandas
+scipy
+click
+plotly
+matplotlib
