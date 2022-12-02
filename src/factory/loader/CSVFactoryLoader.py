@@ -2,6 +2,7 @@ import csv
 import pprint
 
 import simpy
+import io
 
 from factory.Factory import Factory
 
@@ -9,41 +10,48 @@ class CSVFactoryLoader:
     
     def __init__(self):
         self.factoryInfo:dict[str,dict] = {}
-        self.csvFileInfo:list = []
+        self.csvFileInfo:list = []        
     
-    def load(self, path):
+    def load(self, file):
         """CSV File을 읽어와 dict에 저장
 
         Args:
-            path (str): csv 파일 위치
+            path: csv 파일 정보
 
         Returns:
             bool: 파일 읽어온 후 처리 결과(정상: True, 실패: False)
         """
+        if type(file) is str:
+            with open(file, newline="") as csvFile:
+                return self.makeCSVInfo(csvFile)
+            
+        else:
+            strCSVInfo = io.StringIO(file.getvalue().decode("utf-8"))
+            return self.makeCSVInfo(strCSVInfo)
+    
+    def makeCSVInfo(self, loadCSVInfo):
         try:
             fileInfo = {}
             printPretty = pprint.PrettyPrinter()
-            with open("resource/sample.csv", newline="") as csvFile:
-                reader = csv.DictReader(csvFile)
-                for row in reader:
-                    self.csvFileInfo.append(row)
-                    # Factory 등록
-                    if row["Factory"] not in fileInfo:
-                        fileInfo[row["Factory"]] = { "Process": dict[str,list](), "Storage": {}}
-                
-                    # Factory에 해당하는 Process 등록
-                    if row["Type"] == "Process":
-                        if row["Name"] not in fileInfo[row["Factory"]]["Process"]:
-                            fileInfo[row["Factory"]]["Process"][row["Name"]] = []
-                        
-                        fileInfo[row["Factory"]]["Process"][row["Name"]].append(row)
+            reader = csv.DictReader(loadCSVInfo)
+            for row in reader:
+                self.csvFileInfo.append(row)
+                # Factory 등록
+                if row["Factory"] not in fileInfo:
+                    fileInfo[row["Factory"]] = { "Process": dict[str,list](), "Storage": {}}
+            
+                # Factory에 해당하는 Process 등록
+                if row["Type"] == "Process":
+                    if row["Name"] not in fileInfo[row["Factory"]]["Process"]:
+                        fileInfo[row["Factory"]]["Process"][row["Name"]] = []
+                    
+                    fileInfo[row["Factory"]]["Process"][row["Name"]].append(row)
 
-                    # Factory에 해당하는 Storage를 등록
-                    elif row["Type"] == "Storage":
-                        fileInfo[row["Factory"]]["Storage"][row["Name"]] = row
+                # Factory에 해당하는 Storage를 등록
+                elif row["Type"] == "Storage":
+                    fileInfo[row["Factory"]]["Storage"][row["Name"]] = row
             
             # CSV File 정보 출력
-            print( f"csv Path: %s" % path)
             print( f"csv file info: ", end='')
             printPretty.pprint(fileInfo)
             
@@ -56,9 +64,7 @@ class CSVFactoryLoader:
             return True
             
         except FileNotFoundError as fileExceiptn:
-            print( f"File Not Found Error!!!! [%s]" % path)
-            
-        return False
+            print( f"File Not Found Error!!!! [%s]" % loadCSVInfo.name)
             
     def verifyLoadData(self, fileInfo:dict()):
         """CSV File 검증
